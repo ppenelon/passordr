@@ -139,6 +139,7 @@ function App() {
 
       <div className="content">
         {/* Hint */}
+        <div className="category-name"><div>HINT</div></div>
         <div className={classNames("hint", { edited: editMode && savedContent.hint !== hint })}>
           <textarea
             value={hint}
@@ -149,6 +150,7 @@ function App() {
         </div>
 
         {/* Lines / Services */}
+        <div className="category-name"><div>SERVICES</div></div>
         <div className={classNames("lines", { 'edit-mode': editMode })}>
           {lines.map((line, i) =>
             <div className={classNames("line", { outdated: line.outdated, new: i === lines.length - 1 }, editMode && editedLinesStatus[i] && ["edited", editedLinesStatus[i]])} key={i}>

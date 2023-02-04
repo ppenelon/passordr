@@ -35,8 +35,33 @@ body {
   overflow: auto;
 }
 
-.hint, .lines {
+.category-name, .hint, .lines {
   margin: 1rem;
+}
+
+.category-name {
+  font-size: 0.6rem;
+  opacity: 0.5;
+  text-align: right;
+  position: relative;
+  margin: 1rem;
+}
+.category-name:after {
+  content: '';
+  position: absolute;
+  height: 1px;
+  background-color: black;
+  left: 0;
+  right: 0;
+  top: calc(50% - 1px);
+  opacity: 0.5;
+}
+.category-name div {
+  display: inline-block;
+  background-color: #E7F8FE;
+  z-index: 1;
+  position: relative;
+  padding-left: 0.5rem;
 }
 
 .hint textarea {
@@ -127,7 +152,7 @@ body {
 }
 
 @media only screen and (min-width : 769px) {
-  .hint, .lines {
+  .category-name, .hint, .lines {
     margin: 1rem 3rem;
   }
 }
