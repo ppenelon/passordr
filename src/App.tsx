@@ -1,11 +1,14 @@
 import React, { useMemo, useReducer, useRef, useState, Fragment } from 'react';
 import classNames from 'classnames';
 import './App.css';
+import Sidebar from './components/Sidebar';
 
 const dbLines = Array(100).fill({ name: "My Service", outdated: false }).map((line, index) => ({ ...line, name: line.name + index, outdated: Math.random() > 0.9 }));
 const dbHint = "Hello\nBoys";
 
 function App() {
+  const [sidebarOpened, setSidebarOpened] = useState(false);
+
   const [editMode, setEditMode] = useState(false);
 
   const [hint, setHint] = useState(dbHint);
@@ -16,17 +19,28 @@ function App() {
 
   const [savedContent, updateSavedContent] = useReducer(() => ({ hint: hint, lines: [...lines] }), { hint: hint, lines: [...lines] });
   const editedLinesStatus = useMemo(() => lines.map((line, i) => {
+    // Last line = new line (not an update of an existing line)
     if (i === savedContent.lines.length - 1 && lines[i].name) {
       return 'added';
-    } else if (!savedContent.lines[i]) {
+    }
+    // More new lines
+    else if (!savedContent.lines[i]) {
       return 'added';
-    } else if (savedContent.lines[i].outdated && !line.outdated) {
+    } 
+    // Revive outdated line
+    else if (savedContent.lines[i].outdated && !line.outdated) {
       return 'added';
-    } else if (!savedContent.lines[i].outdated && line.outdated) {
+    } 
+    // Outdate line
+    else if (!savedContent.lines[i].outdated && line.outdated) {
       return 'outdate';
-    } else if (savedContent.lines[i].name !== line.name) {
+    } 
+    // Update line content
+    else if (savedContent.lines[i].name !== line.name) {
       return 'update';
     }
+
+    // Line not updated
     return false;
   }), [lines, savedContent]);
 
@@ -97,10 +111,16 @@ function App() {
 
   return (
     <div className="App">
+      {/* Sidebar */}
+      <Sidebar
+        opened={sidebarOpened}
+        onClose={() => setSidebarOpened(false)}
+      />
+
       {/* Header */}
       <div className="header">
         {/* Title */}
-        <div className="title">
+        <div className="title" onClick={e => setSidebarOpened(true)}>
           passordr
         </div>
 
@@ -117,31 +137,33 @@ function App() {
         </div>
       </div>
 
-      {/* Hint */}
-      <div className={classNames("hint", { edited: editMode && savedContent.hint !== hint })}>
-        <textarea
-          value={hint}
-          rows={hintLinesCount}
-          onChange={e => setHint(e.target.value)}
-          readOnly={!editMode}
-        />
-      </div>
+      <div className="content">
+        {/* Hint */}
+        <div className={classNames("hint", { edited: editMode && savedContent.hint !== hint })}>
+          <textarea
+            value={hint}
+            rows={hintLinesCount}
+            onChange={e => setHint(e.target.value)}
+            readOnly={!editMode}
+          />
+        </div>
 
-      {/* Lines / Services */}
-      <div className={classNames("lines", { 'edit-mode': editMode })}>
-        {lines.map((line, i) =>
-          <div className={classNames("line", { outdated: line.outdated, new: i === lines.length - 1 }, editMode && editedLinesStatus[i] && ["edited", editedLinesStatus[i]])} key={i}>
-            <div className="index" onClick={e => editMode && toggleLineOutdated(i)}>{i}</div>
-            <input
-              className="title"
-              ref={el => linesInputRef.current[i] = el}
-              value={line.name}
-              onChange={e => editMode && setLineContent(i, e.target.value)}
-              onKeyDown={e => handleKey(e, i)}
-              readOnly={!editMode}
-            />
-          </div>
-        )}
+        {/* Lines / Services */}
+        <div className={classNames("lines", { 'edit-mode': editMode })}>
+          {lines.map((line, i) =>
+            <div className={classNames("line", { outdated: line.outdated, new: i === lines.length - 1 }, editMode && editedLinesStatus[i] && ["edited", editedLinesStatus[i]])} key={i}>
+              <div className="index" onClick={e => editMode && toggleLineOutdated(i)}>{i}</div>
+              <input
+                className="title"
+                ref={el => linesInputRef.current[i] = el}
+                value={line.name}
+                onChange={e => editMode && setLineContent(i, e.target.value)}
+                onKeyDown={e => handleKey(e, i)}
+                readOnly={!editMode}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

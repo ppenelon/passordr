@@ -2,10 +2,17 @@ body {
   background-color: #E7F8FE;
 }
 
+.App {
+  display: flex;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+}
+
 .header {
   display: flex;
-  position: sticky;
-  top: 0;
+  justify-content: space-between;
   z-index: 1;
   background-color: #E7F8FE;
   font-size: 1.5rem;
@@ -14,13 +21,18 @@ body {
 }
 
 .header .title {
-  flex: 1;
   align-self: flex-end;
+  cursor: pointer;
 }
 .header .edit-toggle button {
   margin-left: .5rem;
   font-size: .75rem;
   padding: .5rem 1rem;
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
 }
 
 .hint {
@@ -29,6 +41,7 @@ body {
 
 .hint textarea {
   width: calc(100% - 1rem);
+  font-size: 1rem;
   resize: none;
   padding: .5rem;
   border-radius: 2px;
@@ -37,7 +50,6 @@ body {
 }
 .hint.edited textarea {
   border: 1px solid #ffd486;
-  /* outline-color: #ffd486; */
 }
 
 .lines {
