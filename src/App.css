@@ -15,12 +15,12 @@ body {
 
 .header .title {
   flex: 1;
+  align-self: flex-end;
 }
-.header .edit-mode {
-  font-size: 1rem;
-}
-.header .edit-mode label input {
-  vertical-align: bottom;
+.header .edit-toggle button {
+  margin-left: .5rem;
+  font-size: .75rem;
+  padding: .5rem 1rem;
 }
 
 .hint {
