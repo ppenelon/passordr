@@ -1,38 +1,91 @@
-.App {
-  text-align: center;
+body {
+  background-color: #E7F8FE;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.header {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #E7F8FE;
+  font-size: 1.5rem;
+  padding: 1rem;
+  box-shadow: 0px 1px 10px 0px #0000001c;
 }
 
-.App-link {
-  color: #61dafb;
+.header .title {
+  flex: 1;
+}
+.header .edit-mode {
+  font-size: 1rem;
+}
+.header .edit-mode label input {
+  vertical-align: bottom;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.hint {
+  margin: 1rem;
+}
+
+.hint textarea {
+  width: calc(100% - 1rem);
+  resize: none;
+  padding: .5rem;
+  border-radius: 2px;
+}
+
+.lines {
+  margin: 1rem;
+}
+
+.lines .line {
+  display: flex;
+  flex-direction: row;
+
+  background-color: #FDFDFD;
+  border: 1px solid #E7F8FE;
+}
+.lines .line:nth-child(10n+1):not(:first-child) {
+  border-top: 1rem solid rgba(155, 227, 255, 0.224);
+}
+.lines .line.outdated {
+  opacity: .7;
+  position: relative;
+}
+.lines .line.outdated::after {
+  content: '';
+  position: absolute;
+  background-color: black;
+  height: 1px;
+  top: calc(50% - .5px);
+  width: 98%;
+  left: 1%;
+  opacity: 0.3;
+}
+.lines .line.new {
+  opacity: .7;
+  margin-bottom: 25vh;
+}
+
+.lines .line .index {
+  padding: .5rem .5rem .5rem .5rem;
+  opacity: .5;
+  font-size: 1rem;
+  border-right: 2px solid rgb(35, 107, 213);
+  width: 2rem;
+  text-align: right;
+  user-select: none;
+}
+.lines.edit-mode .line .index {
+  cursor: pointer;
+}
+
+.lines .line .title {
+  padding: .5rem 0 .5rem .5rem;
+  width: 100%;
+  font-size: 1rem;
+  border: 0;
+}
+.lines .line .title:focus {
+  outline: none;
 }
