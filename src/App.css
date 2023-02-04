@@ -35,7 +35,7 @@ body {
   overflow: auto;
 }
 
-.hint {
+.hint, .lines {
   margin: 1rem;
 }
 
@@ -50,10 +50,6 @@ body {
 }
 .hint.edited textarea {
   border: 1px solid #ffd486;
-}
-
-.lines {
-  margin: 1rem;
 }
 
 .lines .line {
@@ -128,4 +124,10 @@ body {
 }
 .lines .line .title:focus {
   outline: none;
+}
+
+@media only screen and (min-width : 769px) {
+  .hint, .lines {
+    margin: 1rem 3rem;
+  }
 }
