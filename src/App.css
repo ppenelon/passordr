@@ -32,6 +32,12 @@ body {
   resize: none;
   padding: .5rem;
   border-radius: 2px;
+  outline: none;
+  border: 1px solid transparent;
+}
+.hint.edited textarea {
+  border: 1px solid #ffd486;
+  /* outline-color: #ffd486; */
 }
 
 .lines {
@@ -46,7 +52,7 @@ body {
   border: 1px solid #E7F8FE;
 }
 .lines .line:nth-child(10n+1):not(:first-child) {
-  border-top: 1rem solid rgba(155, 227, 255, 0.224);
+  margin-top: 1rem;
 }
 .lines .line.outdated {
   opacity: .7;
@@ -61,10 +67,23 @@ body {
   width: 98%;
   left: 1%;
   opacity: 0.3;
+  pointer-events: none;
 }
 .lines .line.new {
   opacity: .7;
-  margin-bottom: 25vh;
+  margin-bottom: 10vh;
+}
+.lines .line.edited {
+  border-left-width: 5px;
+}
+.lines .line.edited.added {
+  border-left-color: #88d75d;
+}
+.lines .line.edited.outdate {
+  border-left-color: #be1717;
+}
+.lines .line.edited.update {
+  border-left-color: #f2dc32;
 }
 
 .lines .line .index {
@@ -73,6 +92,15 @@ body {
   font-size: 1rem;
   border-right: 2px solid rgb(35, 107, 213);
   width: 2rem;
+  text-align: right;
+  user-select: none;
+}
+.lines .line.edited .index {
+  padding: .5rem .5rem .5rem .5rem;
+  opacity: .5;
+  font-size: 1rem;
+  border-right: 2px solid rgb(35, 107, 213);
+  width: calc(2rem - 4px);
   text-align: right;
   user-select: none;
 }

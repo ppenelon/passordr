@@ -14,7 +14,21 @@ function App() {
   const [lines, setLines] = useState([...dbLines, { name: "", outdated: false }]);
   const linesInputRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  const [savedContent, updateSavedContent] = useReducer(() => ({ hint: hint, lines: [...lines]}), ({ hint: hint, lines: [...lines]}));
+  const [savedContent, updateSavedContent] = useReducer(() => ({ hint: hint, lines: [...lines]}), { hint: hint, lines: [...lines]});
+  const editedLinesStatus = useMemo(() => lines.map((line, i) => {
+    if(i === savedContent.lines.length - 1 && lines[i].name) {
+      return 'added';
+    } else if(!savedContent.lines[i]) {
+      return 'added';
+    } else if(savedContent.lines[i].outdated && !line.outdated) {
+      return 'added';
+    } else if(!savedContent.lines[i].outdated && line.outdated) {
+      return 'outdate';
+    } else if(savedContent.lines[i].name !== line.name) {
+      return 'update';
+    }
+    return false;
+  }), [lines, savedContent]);
 
   function toggleLineOutdated(lineIndex: number) {
     setLines(lines => {
@@ -29,8 +43,16 @@ function App() {
       const newLines = [...lines];
       newLines[index] = { ...newLines[index], name: value };
       if(index === lines.length - 1) {
-        newLines.push('');
+        newLines.push({ name: '', outdated: false });
       }
+      return newLines;
+    });
+  }
+
+  function deleteLine(lineIndex: number) {
+    setLines(lines => {
+      const newLines = [...lines];
+      newLines.splice(lineIndex, 1);
       return newLines;
     });
   }
@@ -39,14 +61,21 @@ function App() {
     linesInputRef.current[inputIndex]?.focus();
   }
 
-  function handleKeyMovement(key: string, currentInputIndex: number) {
-    switch(key) {
+  function handleKey(event: React.KeyboardEvent<HTMLInputElement>, lineIndex: number) {
+    switch(event.key) {
       case "Enter":
       case "ArrowDown":
-        jumpToInput(currentInputIndex + 1);
+        jumpToInput(lineIndex + 1);
         break;
       case "ArrowUp":
-        jumpToInput(currentInputIndex - 1);
+        jumpToInput(lineIndex - 1);
+        break;
+      case "Backspace":
+        if(!lines[lineIndex].name.length && lineIndex >= savedContent.lines.length) {
+          jumpToInput(lineIndex - 1);
+          deleteLine(lineIndex);
+          event.preventDefault();
+        }
         break;
     }
   }
@@ -70,7 +99,7 @@ function App() {
       </div>
 
       {/* Hint */}
-      <div className="hint">
+      <div className={classNames("hint", { edited: editMode && savedContent.hint !== hint })}>
         <textarea
           value={hint}
           rows={hintLinesCount}
@@ -82,14 +111,14 @@ function App() {
       {/* Lines / Services */}
       <div className={classNames("lines", { 'edit-mode': editMode })}>
         {lines.map((line, i) => 
-          <div className={classNames("line", { outdated: line.outdated, new: i === lines.length - 1 })} key={i}>
+          <div className={classNames("line", { outdated: line.outdated, new: i === lines.length - 1}, editMode && editedLinesStatus[i] && ["edited", editedLinesStatus[i]])} key={i}>
             <div className="index" onClick={e => editMode && toggleLineOutdated(i)}>{i}</div>
             <input 
               className="title"
               ref={el => linesInputRef.current[i] = el}
               value={line.name}
               onChange={e => editMode && setLineContent(i, e.target.value)}
-              onKeyDown={e => handleKeyMovement(e.key, i)}
+              onKeyDown={e => handleKey(e, i)}
               readOnly={!editMode}
             />
           </div>
