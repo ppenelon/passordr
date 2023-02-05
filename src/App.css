@@ -40,7 +40,7 @@ body {
   overflow: auto;
 }
 
-.category-name, .hint, .lines {
+.category-name, .hint, .services {
   margin: 1rem;
 }
 
@@ -83,21 +83,21 @@ body {
   border: 1px solid #ffd486;
 }
 
-.lines .line {
+.services .service {
   display: flex;
   flex-direction: row;
 
   background-color: #FDFDFD;
   border: 1px solid #E7F8FE;
 }
-.lines .line:nth-child(10n+1):not(:first-child) {
+.services .service:nth-child(10n+1):not(:first-child) {
   margin-top: 1rem;
 }
-.lines .line.outdated {
+.services .service.outdated {
   opacity: .7;
   position: relative;
 }
-.lines .line.outdated::after {
+.services .service.outdated::after {
   content: '';
   position: absolute;
   background-color: black;
@@ -108,24 +108,24 @@ body {
   opacity: 0.3;
   pointer-events: none;
 }
-.lines .line.new {
+.services .service.new {
   opacity: .7;
   margin-bottom: 10vh;
 }
-.lines .line.edited {
+.services .service.edited {
   border-left-width: 5px;
 }
-.lines .line.edited.added {
+.services .service.edited.added {
   border-left-color: #88d75d;
 }
-.lines .line.edited.outdate {
+.services .service.edited.outdate {
   border-left-color: #be1717;
 }
-.lines .line.edited.update {
+.services .service.edited.update {
   border-left-color: #f2dc32;
 }
 
-.lines .line .index {
+.services .service .index {
   padding: .5rem .5rem .5rem .5rem;
   opacity: .5;
   font-size: 1rem;
@@ -134,7 +134,7 @@ body {
   text-align: right;
   user-select: none;
 }
-.lines .line.edited .index {
+.services .service.edited .index {
   padding: .5rem .5rem .5rem .5rem;
   opacity: .5;
   font-size: 1rem;
@@ -143,22 +143,22 @@ body {
   text-align: right;
   user-select: none;
 }
-.lines.edit-mode .line .index {
+.services.edit-mode .service .index {
   cursor: pointer;
 }
 
-.lines .line .title {
+.services .service .title {
   padding: .5rem 0 .5rem .5rem;
   width: 100%;
   font-size: 1rem;
   border: 0;
 }
-.lines .line .title:focus {
+.services .service .title:focus {
   outline: none;
 }
 
 @media only screen and (min-width : 769px) {
-  .category-name, .hint, .lines {
+  .category-name, .hint, .services {
     margin: 1rem 3rem;
   }
 }

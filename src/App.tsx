@@ -1,108 +1,126 @@
-import React, { useMemo, useReducer, useRef, useState, Fragment } from 'react';
+import React, { useMemo, useRef, useState, Fragment } from 'react';
 import classNames from 'classnames';
-import './App.css';
 import Sidebar from './components/Sidebar';
-
-const dbLines = Array(100).fill({ name: "My Service", outdated: false }).map((line, index) => ({ ...line, name: line.name + index, outdated: Math.random() > 0.9 }));
-const dbHint = "Hello\nBoys";
+import { useVaultStore, generateNewService } from './stores/vault.store';
+import './App.css';
 
 function App() {
+  const storedServices = useVaultStore(state => state.services);
+  const storedHint = useVaultStore(state => state.hint);
+  const setStoredHint = useVaultStore(state => state.setHint);
+  const setStoredServices = useVaultStore(state => state.setServices);
+  
   const [sidebarOpened, setSidebarOpened] = useState(false);
 
   const [editMode, setEditMode] = useState(false);
 
-  const [hint, setHint] = useState(dbHint);
+  const [hint, setHint] = useState(storedHint);
   const hintLinesCount = useMemo(() => hint.split(/\r\n|\r|\n/).length, [hint]);
 
-  const [lines, setLines] = useState([...dbLines, { name: "", outdated: false }]);
-  const linesInputRef = useRef<(HTMLInputElement | null)[]>([]);
+  const [services, setServices] = useState(storedServices);
+  const servicesInputRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  const [savedContent, updateSavedContent] = useReducer(() => ({ hint: hint, lines: [...lines] }), { hint: hint, lines: [...lines] });
-  const editedLinesStatus = useMemo(() => lines.map((line, i) => {
-    // Last line = new line (not an update of an existing line)
-    if (i === savedContent.lines.length - 1 && lines[i].name) {
-      return 'added';
+  const editedServicesStatus = useMemo(() => services.map((service, i) => {
+    // Handle existing services modifications
+    if(i < storedServices.length) {
+      // Revive outdated service
+      if (storedServices[i].outdated && !service.outdated) {
+        return 'added';
+      } 
+      // Outdate service
+      else if (!storedServices[i].outdated && service.outdated) {
+        return 'outdate';
+      } 
+      // Update service content
+      else if (storedServices[i].name !== service.name) {
+        return 'update';
+      }
+    } 
+    // Handle new services
+    else {
+      // Check last service creation (the new one at the bottom)
+      if(i === services.length - 1) {
+        return service.name ? 'added' : false;
+      }
+      // Anything else has been added
+      else {
+        return 'added'
+      }
     }
-    // More new lines
-    else if (!savedContent.lines[i]) {
-      return 'added';
-    } 
-    // Revive outdated line
-    else if (savedContent.lines[i].outdated && !line.outdated) {
-      return 'added';
-    } 
-    // Outdate line
-    else if (!savedContent.lines[i].outdated && line.outdated) {
-      return 'outdate';
-    } 
-    // Update line content
-    else if (savedContent.lines[i].name !== line.name) {
-      return 'update';
-    }
-
-    // Line not updated
+    // Service not updated
     return false;
-  }), [lines, savedContent]);
+  }), [services, storedServices]);
 
   function goEditMode() {
+    setServices(services => [...services, generateNewService()]);
     setEditMode(true);
-    updateSavedContent();
   }
 
   function goSave() {
+    const servicesWithoutNew = services.slice(0, services.length - 1);
+    setStoredHint(hint);
+    setServices(servicesWithoutNew);
+    setStoredServices(servicesWithoutNew);
     setEditMode(false);
-  }
+  };
 
   function goCancel() {
-    setHint(savedContent.hint);
-    setLines(savedContent.lines);
+    setHint(storedHint);
+    setServices(storedServices);
     setEditMode(false);
   }
   
-  function toggleLineOutdated(lineIndex: number) {
-    setLines(lines => {
-      const newLines = [...lines];
-      newLines[lineIndex] = { ...newLines[lineIndex], outdated: !newLines[lineIndex].outdated };
-      return newLines;
+  function toggleServiceOutdated(serviceIndex: number) {
+    setServices(services => {
+      const newServices = [...services];
+      newServices[serviceIndex] = { ...newServices[serviceIndex], outdated: !newServices[serviceIndex].outdated };
+      return newServices;
     });
   }
 
-  function setLineContent(index: number, value: string) {
-    setLines(lines => {
-      const newLines = [...lines];
-      newLines[index] = { ...newLines[index], name: value };
-      if (index === lines.length - 1) {
-        newLines.push({ name: '', outdated: false });
+  function setServiceName(serviceIndex: number, value: string) {
+    setServices(services => {
+      const newServices = [...services];
+      newServices[serviceIndex] = { ...newServices[serviceIndex], name: value };
+      if (serviceIndex === services.length - 1) {
+        newServices.push({ name: '', outdated: false });
       }
-      return newLines;
+      return newServices;
     });
   }
 
-  function deleteLine(lineIndex: number) {
-    setLines(lines => {
-      const newLines = [...lines];
-      newLines.splice(lineIndex, 1);
-      return newLines;
+  function deleteService(serviceIndex: number) { 
+    setServices(services => {
+      const newServices = [...services];
+      newServices.splice(serviceIndex, 1);
+      return newServices;
     });
   }
 
-  function jumpToInput(inputIndex: number) {
-    linesInputRef.current[inputIndex]?.focus();
+  function jumpToInput(serviceIndex: number) {
+    servicesInputRef.current[serviceIndex]?.focus();
   }
 
-  function handleKey(event: React.KeyboardEvent<HTMLInputElement>, lineIndex: number) {
+  function handleKey(event: React.KeyboardEvent<HTMLInputElement>, serviceIndex: number) {
     switch (event.key) {
       case "Enter":
       case "ArrowDown":
-        jumpToInput(lineIndex + 1);
+        jumpToInput(serviceIndex + 1);
         break;
       case "ArrowUp":
-        jumpToInput(lineIndex - 1);
+        jumpToInput(serviceIndex - 1);
         break;
       case "Backspace":
-        if (!lines[lineIndex].name.length && lineIndex >= savedContent.lines.length) {
-          jumpToInput(lineIndex - 1);
-          deleteLine(lineIndex);
+        if (
+          // Has no name
+          !services[serviceIndex].name && 
+          // Is new service
+          serviceIndex >= storedServices.length && 
+          // Is not the last service (the new one)
+          serviceIndex < services.length - 1
+        ) {
+          jumpToInput(serviceIndex - 1);
+          deleteService(serviceIndex);
           event.preventDefault();
         }
         break;
@@ -142,7 +160,7 @@ function App() {
       <div className="content">
         {/* Hint */}
         <div className="category-name"><div>HINT</div></div>
-        <div className={classNames("hint", { edited: editMode && savedContent.hint !== hint })}>
+        <div className={classNames("hint", { edited: editMode && storedHint !== hint })}>
           <textarea
             value={hint}
             rows={hintLinesCount}
@@ -151,17 +169,17 @@ function App() {
           />
         </div>
 
-        {/* Lines / Services */}
+        {/* Services */}
         <div className="category-name"><div>SERVICES</div></div>
-        <div className={classNames("lines", { 'edit-mode': editMode })}>
-          {lines.map((line, i) =>
-            <div className={classNames("line", { outdated: line.outdated, new: i === lines.length - 1 }, editMode && editedLinesStatus[i] && ["edited", editedLinesStatus[i]])} key={i}>
-              <div className="index" onClick={e => editMode && toggleLineOutdated(i)}>{i}</div>
+        <div className={classNames("services", { 'edit-mode': editMode })}>
+          {services.map((service, i) =>
+            <div className={classNames("service", { outdated: service.outdated, new: editMode && i === services.length - 1 }, editMode && editedServicesStatus[i] && ["edited", editedServicesStatus[i]])} key={i}>
+              <div className="index" onClick={e => editMode && toggleServiceOutdated(i)}>{i}</div>
               <input
                 className="title"
-                ref={el => linesInputRef.current[i] = el}
-                value={line.name}
-                onChange={e => editMode && setLineContent(i, e.target.value)}
+                ref={el => servicesInputRef.current[i] = el}
+                value={service.name}
+                onChange={e => editMode && setServiceName(i, e.target.value)}
                 onKeyDown={e => handleKey(e, i)}
                 readOnly={!editMode}
               />
