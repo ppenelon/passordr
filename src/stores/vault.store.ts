@@ -5,10 +5,12 @@ export interface IVaultStore {
   name: string;
   hint: string;
   services: IVaultService[];
+  history: IVaultHistoryItem[];
 
   rename: (name: string) => void;
   setHint: (hint: string) => void;
   setServices: (services: IVaultService[]) => void;
+  addHistoryItem: (newHistoryItem: IVaultHistoryItem) => void;
 }
 
 export interface IVaultService {
@@ -16,16 +18,31 @@ export interface IVaultService {
   outdated: boolean;
 }
 
+export interface IVaultHistoryItem {
+  timestamp: string;
+  updates: IVaultHistoryItemUpdate[];
+}
+
+export interface IVaultHistoryItemUpdate {
+  serviceIndex: number;
+  type: 'added' | 'update' | 'outdate';
+  serviceNameFrom: string;
+  serviceNameTo: string;
+}
+
 export const useVaultStore = create(
   persist<IVaultStore>((set) => ({
     name: "New vault",
     hint: "Enter your hint here, be creative!",
     services: [{ name: "Welcome to passordr", outdated: false }],
+    history: [],
     rename: (name: string) => set((state) => ({ name })),
     setHint: (hint: string) => set((state) => ({ hint })),
-    setServices: (services: IVaultService[]) => set((state) => ({ services }))
+    setServices: (services: IVaultService[]) => set((state) => ({ services })),
+    addHistoryItem: (newHistoryItem: IVaultHistoryItem) => set((state) => ({ history: [...state.history, newHistoryItem] }))
   }), {
-    name: 'vault'
+    name: 'vault',
+    version: 1
   })
 );
 

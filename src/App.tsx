@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState, Fragment } from 'react';
 import classNames from 'classnames';
 import Sidebar from './components/Sidebar';
-import { useVaultStore, generateNewService } from './stores/vault.store';
+import { useVaultStore, generateNewService, IVaultHistoryItem, IVaultHistoryItemUpdate } from './stores/vault.store';
 import './App.css';
 
 function App() {
@@ -9,6 +9,7 @@ function App() {
   const storedHint = useVaultStore(state => state.hint);
   const setStoredHint = useVaultStore(state => state.setHint);
   const setStoredServices = useVaultStore(state => state.setServices);
+  const storeNewHistoryItem = useVaultStore(state => state.addHistoryItem);
   
   const [sidebarOpened, setSidebarOpened] = useState(false);
 
@@ -58,9 +59,25 @@ function App() {
 
   function goSave() {
     const servicesWithoutNew = services.slice(0, services.length - 1);
+    const historyItem: IVaultHistoryItem = {
+      timestamp: new Date().toISOString(),
+      updates: services.reduce<IVaultHistoryItemUpdate[]>((editedServices, service, i) => {
+        if(editedServicesStatus[i]) {
+          editedServices.push({
+            serviceIndex: i,
+            type: editedServicesStatus[i] as IVaultHistoryItemUpdate['type'],
+            serviceNameFrom: storedServices[i] ? storedServices[i].name : '',
+            serviceNameTo: service.name,
+          });
+        }
+        return editedServices;
+      }, [])
+    };
+
     setStoredHint(hint);
     setServices(servicesWithoutNew);
     setStoredServices(servicesWithoutNew);
+    storeNewHistoryItem(historyItem)
     setEditMode(false);
   };
 
