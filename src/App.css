@@ -23,6 +23,11 @@ body {
 .header .title {
   align-self: flex-end;
   cursor: pointer;
+  user-select: none;
+}
+.header .title svg {
+  width: .8rem;
+  margin-right: 0.5rem;
 }
 .header .edit-toggle button {
   margin-left: .5rem;
@@ -45,6 +50,7 @@ body {
   text-align: right;
   position: relative;
   margin: 1rem;
+  user-select: none;
 }
 .category-name:after {
   content: '';
