@@ -25,9 +25,15 @@ export interface IVaultHistoryItem {
 
 export interface IVaultHistoryItemUpdate {
   serviceIndex: number;
-  type: 'added' | 'update' | 'outdate';
+  type: VaultHistoryItemUpdateType;
   serviceNameFrom: string;
   serviceNameTo: string;
+}
+
+export enum VaultHistoryItemUpdateType {
+  Added = 'added',
+  Update = 'update',
+  Outdate = 'outdate',
 }
 
 export const useVaultStore = create(

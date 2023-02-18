@@ -1,11 +1,12 @@
 import React, { useMemo } from "react";
 import { ModalType, useInteractionsStore } from "../stores/interactions.store";
-import { IVaultHistoryItem, useVaultStore } from "../stores/vault.store";
+import { IVaultHistoryItem, useVaultStore, VaultHistoryItemUpdateType } from "../stores/vault.store";
 import Modal from "./Modal";
 import './HistoryModal.css';
 
 interface IFormattedVaultHistoryItem extends IVaultHistoryItem {
   formattedTimestamp: string;
+  totalsUpdateTypes: {[key in VaultHistoryItemUpdateType]?: number};
 } 
 
 const HistoryModal: React.FC = () => {
@@ -20,7 +21,14 @@ const HistoryModal: React.FC = () => {
       .reverse()
       .map(historyItem => ({
         ...historyItem,
-        formattedTimestamp: new Date(historyItem.timestamp).toLocaleString()
+        formattedTimestamp: new Date(historyItem.timestamp).toLocaleString(),
+        totalsUpdateTypes: 
+          Object
+            .values(VaultHistoryItemUpdateType)
+            .reduce((totals, type) => ({
+              ...totals,
+              [type]: historyItem.updates.reduce((total, update) => update.type === type ? total + 1 : total, 0)
+            }), {})
       }))
     , [vaultHistory]);
 
@@ -29,7 +37,17 @@ const HistoryModal: React.FC = () => {
       <ul className="vault-history">
         {reversedVaultHistory.map(historyItem => 
           <li className="vault-history-item">
-            <h3>{historyItem.formattedTimestamp}</h3>
+            <h3>
+              <span>{historyItem.formattedTimestamp}</span>
+              <span>
+                {
+                  Object.entries(historyItem.totalsUpdateTypes)
+                    .map(([type, totalUpdates]) => 
+                      <span data-vault-history-item-update-type={type}>{totalUpdates}</span>
+                    )
+                }
+              </span>
+            </h3>
             <ul>
               {historyItem.updates.map(historyItemUpdate =>
                 <li className="vault-history-item-update">

@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState, Fragment } from 'react';
 import classNames from 'classnames';
 import Sidebar from './components/Sidebar';
-import { useVaultStore, generateNewService, IVaultHistoryItem, IVaultHistoryItemUpdate } from './stores/vault.store';
+import { useVaultStore, generateNewService, IVaultHistoryItem, IVaultHistoryItemUpdate, VaultHistoryItemUpdateType } from './stores/vault.store';
 import HistoryModal from './components/HistoryModal';
 import './App.css';
 import { useInteractionsStore } from './stores/interactions.store';
@@ -28,26 +28,26 @@ function App() {
     if(i < storedServices.length) {
       // Revive outdated service
       if (storedServices[i].outdated && !service.outdated) {
-        return 'added';
+        return VaultHistoryItemUpdateType.Added;
       } 
       // Outdate service
       else if (!storedServices[i].outdated && service.outdated) {
-        return 'outdate';
+        return VaultHistoryItemUpdateType.Outdate;
       } 
       // Update service content
       else if (storedServices[i].name !== service.name) {
-        return 'update';
+        return VaultHistoryItemUpdateType.Update;
       }
     } 
     // Handle new services
     else {
       // Check last service creation (the new one at the bottom)
       if(i === services.length - 1) {
-        return service.name ? 'added' : false;
+        return service.name ? VaultHistoryItemUpdateType.Added : false;
       }
       // Anything else has been added
       else {
-        return 'added'
+        return VaultHistoryItemUpdateType.Added;
       }
     }
     // Service not updated
