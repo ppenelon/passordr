@@ -193,7 +193,7 @@ function App() {
         <div className={classNames("services", { 'edit-mode': editMode })}>
           {services.map((service, i) =>
             <div className={classNames("service", { outdated: service.outdated, new: editMode && i === services.length - 1 }, editMode && editedServicesStatus[i] && ["edited", editedServicesStatus[i]])} key={i}>
-              <div className="index" onClick={e => editMode && toggleServiceOutdated(i)}>{i}</div>
+              <div className="index" onClick={e => editMode && i < storedServices.length && toggleServiceOutdated(i)}>{i}</div>
               <input
                 className="title"
                 ref={el => servicesInputRef.current[i] = el}
