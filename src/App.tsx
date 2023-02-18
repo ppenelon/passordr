@@ -63,6 +63,10 @@ function App() {
     const servicesWithoutNew = services.slice(0, services.length - 1);
     const historyItem: IVaultHistoryItem = {
       timestamp: new Date().toISOString(),
+      hint: storedHint !== hint ? {
+        hintFrom: storedHint,
+        hintTo: hint,
+      } : undefined,
       updates: services.reduce<IVaultHistoryItemUpdate[]>((editedServices, service, i) => {
         if(editedServicesStatus[i]) {
           editedServices.push({

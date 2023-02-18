@@ -1,12 +1,13 @@
 import React, { useMemo } from "react";
 import { ModalType, useInteractionsStore } from "../stores/interactions.store";
-import { IVaultHistoryItem, useVaultStore, VaultHistoryItemUpdateType } from "../stores/vault.store";
+import { IVaultHistoryItem, IVaultHistoryItemUpdate, useVaultStore, VaultHistoryItemUpdateType } from "../stores/vault.store";
 import Modal from "./Modal";
 import './HistoryModal.css';
 
 interface IFormattedVaultHistoryItem extends IVaultHistoryItem {
   formattedTimestamp: string;
   totalsUpdateTypes: {[key in VaultHistoryItemUpdateType]?: number};
+  updatesWithHint: IVaultHistoryItemUpdate[];
 } 
 
 const HistoryModal: React.FC = () => {
@@ -15,22 +16,43 @@ const HistoryModal: React.FC = () => {
 
   const vaultHistory = useVaultStore(state => state.history);
 
-  const reversedVaultHistory = useMemo<IFormattedVaultHistoryItem[]>(() => 
-    vaultHistory
-      .slice()
-      .reverse()
-      .map(historyItem => ({
+  const reversedVaultHistory = useMemo<IFormattedVaultHistoryItem[]>(() => {
+    const reversedHistory = vaultHistory.slice().reverse();
+    const formattedHistory: IFormattedVaultHistoryItem[] = [];
+
+    for(const historyItem of reversedHistory) {
+      const formattedTimestamp = new Date(historyItem.timestamp).toLocaleString();
+
+      const totalsUpdateTypes: IFormattedVaultHistoryItem['totalsUpdateTypes'] = {};
+      for(const type of Object.values(VaultHistoryItemUpdateType)) {
+        if(type === VaultHistoryItemUpdateType.Hint) {
+          totalsUpdateTypes[type] = historyItem.hint ? 1 : 0;
+        }
+        else {
+          totalsUpdateTypes[type] =  historyItem.updates.reduce((total, update) => update.type === type ? total + 1 : total, 0);
+        }
+      }
+
+      const updatesWithHint = [...historyItem.updates];
+      if(historyItem.hint) {
+        updatesWithHint.unshift({
+          serviceIndex: 0,
+          type: VaultHistoryItemUpdateType.Hint,
+          serviceNameFrom: historyItem.hint.hintFrom,
+          serviceNameTo: historyItem.hint.hintTo
+        });
+      }
+
+      formattedHistory.push({
         ...historyItem,
-        formattedTimestamp: new Date(historyItem.timestamp).toLocaleString(),
-        totalsUpdateTypes: 
-          Object
-            .values(VaultHistoryItemUpdateType)
-            .reduce((totals, type) => ({
-              ...totals,
-              [type]: historyItem.updates.reduce((total, update) => update.type === type ? total + 1 : total, 0)
-            }), {})
-      }))
-    , [vaultHistory]);
+        formattedTimestamp,
+        totalsUpdateTypes,
+        updatesWithHint
+      });
+    }
+
+    return formattedHistory;
+  }, [vaultHistory]);
 
   return (
     <Modal title={`Vault history (${vaultHistory.length} update${vaultHistory.length > 1 ? 's' : ''})`} className="history-modal" opened={openedModal === ModalType.History} onClose={() => closeModal()}>
@@ -49,20 +71,26 @@ const HistoryModal: React.FC = () => {
               </span>
             </h3>
             <ul>
-              {historyItem.updates.map(historyItemUpdate =>
+              {historyItem.updatesWithHint.map(historyItemUpdate =>
                 <li className="vault-history-item-update">
                   <span data-vault-history-item-update-type={historyItemUpdate.type}>{historyItemUpdate.type}</span>
                   <table className="vault-history-item-update-values">
                     <tbody>
                       <tr>
-                        <td colSpan={2}>Service N°{historyItemUpdate.serviceIndex}</td>
+                        <td colSpan={2}>
+                          {
+                            historyItemUpdate.type === VaultHistoryItemUpdateType.Hint ?
+                              `Hint` : 
+                              `Service N°${historyItemUpdate.serviceIndex}`
+                          }
+                        </td>
                       </tr>
                       <tr>
-                        <td>Previous name</td>
+                        <td>Previous value</td>
                         <td><code>{historyItemUpdate.serviceNameFrom}</code></td>
                       </tr>
                       <tr>
-                        <td>New name</td>
+                        <td>New value</td>
                         <td><code>{historyItemUpdate.serviceNameTo}</code></td>
                       </tr>
                     </tbody>

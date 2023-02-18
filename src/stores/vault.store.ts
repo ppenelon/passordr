@@ -20,6 +20,12 @@ export interface IVaultService {
 
 export interface IVaultHistoryItem {
   timestamp: string;
+
+  hint?: {
+    hintFrom: string;
+    hintTo: string;
+  }
+  
   updates: IVaultHistoryItemUpdate[];
 }
 
@@ -31,6 +37,7 @@ export interface IVaultHistoryItemUpdate {
 }
 
 export enum VaultHistoryItemUpdateType {
+  Hint = 'hint',
   Added = 'added',
   Update = 'update',
   Outdate = 'outdate',

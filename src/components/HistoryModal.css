@@ -7,6 +7,9 @@
   padding-left: 1rem;
 }
 
+.history-modal span[data-vault-history-item-update-type="hint"] {
+  background-color: #dedede;
+}
 .history-modal span[data-vault-history-item-update-type="added"] {
   background-color: #88d75d;
 }
