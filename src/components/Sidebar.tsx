@@ -13,7 +13,7 @@ const Sidebar: React.FC = () => {
   const renameVault = useVaultStore(state => state.rename);
 
   function promptRenameVault() {
-    const newVaultName = prompt('New vault name');
+    const newVaultName = prompt('Please enter new vault name', vaultName);
     if(newVaultName) {
       renameVault(newVaultName.trim());
     }

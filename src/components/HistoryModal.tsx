@@ -25,7 +25,7 @@ const HistoryModal: React.FC = () => {
     , [vaultHistory]);
 
   return (
-    <Modal title="Vault history" className="history-modal" opened={openedModal === ModalType.History} onClose={() => closeModal()}>
+    <Modal title={`Vault history (${vaultHistory.length} update${vaultHistory.length > 1 ? 's' : ''})`} className="history-modal" opened={openedModal === ModalType.History} onClose={() => closeModal()}>
       <ul className="vault-history">
         {reversedVaultHistory.map(historyItem => 
           <li className="vault-history-item">
