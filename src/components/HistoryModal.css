@@ -7,6 +7,20 @@
   padding-left: 1rem;
 }
 
+.history-modal .vault-history .vault-history-item > ul {
+  position: relative;
+}
+.history-modal .vault-history .vault-history-item > ul::after {
+  content: '';
+  position: absolute;
+  top: -1rem;
+  bottom: 0;
+  left: .5rem;
+  width: 1px;
+  background-color: black;
+  opacity: .1;
+}
+
 .history-modal .vault-history .vault-history-item .vault-history-item-update {
   position: relative;
 }
