@@ -1,0 +1,54 @@
+.history-modal ul {
+  list-style: none;
+  padding: 0;
+}
+.history-modal ul ul {
+  list-style: none;
+  padding-left: 1rem;
+}
+
+.history-modal .vault-history .vault-history-item .vault-history-item-update {
+  position: relative;
+}
+
+.history-modal .vault-history .vault-history-item .vault-history-item-update span[data-vault-history-item-update-type] {
+  text-transform: uppercase;
+  font-size: 0.5rem;
+  border-radius: 3px;
+  padding: 0 0.1rem;
+  font-weight: bold;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  writing-mode: tb;
+  text-align: center;
+  transform: rotate(180deg);
+}
+.history-modal .vault-history .vault-history-item .vault-history-item-update span[data-vault-history-item-update-type="added"] {
+  background-color: #88d75d;
+}
+.history-modal .vault-history .vault-history-item .vault-history-item-update span[data-vault-history-item-update-type="update"] {
+  background-color: #f2dc32;
+}
+.history-modal .vault-history .vault-history-item .vault-history-item-update span[data-vault-history-item-update-type="outdate"] {
+  background-color: #be1717;
+}
+
+.history-modal .vault-history .vault-history-item .vault-history-item-update .vault-history-item-update-values {
+  width: calc(100% - 1.2rem);
+  margin-left: 1rem;
+  margin-top: .3rem;
+  background-color: #00000008;
+  border-radius: 3px;
+}
+
+.history-modal .vault-history .vault-history-item .vault-history-item-update .vault-history-item-update-values tr td:first-child {
+  white-space: nowrap;
+  vertical-align: top;
+  font-weight: bold;
+}
+.history-modal .vault-history .vault-history-item .vault-history-item-update .vault-history-item-update-values tr code {
+  display: block;
+  text-align: right;
+}

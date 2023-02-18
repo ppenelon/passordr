@@ -2,7 +2,9 @@ import React, { useMemo, useRef, useState, Fragment } from 'react';
 import classNames from 'classnames';
 import Sidebar from './components/Sidebar';
 import { useVaultStore, generateNewService, IVaultHistoryItem, IVaultHistoryItemUpdate } from './stores/vault.store';
+import HistoryModal from './components/HistoryModal';
 import './App.css';
+import { useInteractionsStore } from './stores/interactions.store';
 
 function App() {
   const storedServices = useVaultStore(state => state.services);
@@ -10,9 +12,9 @@ function App() {
   const setStoredHint = useVaultStore(state => state.setHint);
   const setStoredServices = useVaultStore(state => state.setServices);
   const storeNewHistoryItem = useVaultStore(state => state.addHistoryItem);
-  
-  const [sidebarOpened, setSidebarOpened] = useState(false);
 
+  const openSidebar = useInteractionsStore(state => state.openSidebar);
+  
   const [editMode, setEditMode] = useState(false);
 
   const [hint, setHint] = useState(storedHint);
@@ -146,16 +148,16 @@ function App() {
 
   return (
     <div className="App">
+      {/* Modals */}
+      <HistoryModal />
+
       {/* Sidebar */}
-      <Sidebar
-        opened={sidebarOpened}
-        onClose={() => setSidebarOpened(false)}
-      />
+      <Sidebar />
 
       {/* Header */}
       <div className="header">
         {/* Title */}
-        <button className="title action-button" onClick={e => setSidebarOpened(true)}>
+        <button className="title action-button" onClick={e => openSidebar()}>
           {/* Font Awesome fa-solid fa-bars */}
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg>
           passordr
