@@ -2,10 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import "./Sidebar.css";
 import { ModalType, useInteractionsStore } from "../stores/interactions.store";
-import {
-  useCurrentVault,
-  useVaultsManagerStore,
-} from "../stores/vaultsManager.store";
+import { useCurrentVault } from "../stores/vaultsManager.store";
 
 const Sidebar: React.FC = () => {
   const sidebarOpened = useInteractionsStore((state) => state.sidebarOpened);
@@ -13,19 +10,6 @@ const Sidebar: React.FC = () => {
   const openModal = useInteractionsStore((state) => state.openModal);
 
   const currentVault = useCurrentVault();
-  const renameCurrentVault = useVaultsManagerStore(
-    (state) => state.renameCurrentVault
-  );
-
-  function promptRenameVault() {
-    const newVaultName = prompt(
-      "Please enter new vault name",
-      currentVault.name
-    );
-    if (newVaultName) {
-      renameCurrentVault(newVaultName.trim());
-    }
-  }
 
   return (
     <div className={classNames("sidebar", { opened: sidebarOpened })}>
@@ -63,21 +47,6 @@ const Sidebar: React.FC = () => {
                 <li>
                   <button
                     className="action-button"
-                    onClick={() => promptRenameVault()}
-                  >
-                    {/* Font Awesome fa-solid fa-pen */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 448 512"
-                    >
-                      <path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM325.8 139.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-21.4 21.4-71-71 21.4-21.4c15.6-15.6 40.9-15.6 56.6 0zM119.9 289L225.1 183.8l71 71L190.9 359.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z" />
-                    </svg>
-                    Rename
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="action-button"
                     onClick={() => openModal(ModalType.History)}
                   >
                     {/* Font Awesome fa-solid fa-clock */}
@@ -91,7 +60,10 @@ const Sidebar: React.FC = () => {
                   </button>
                 </li>
                 <li>
-                  <button className="action-button">
+                  <button
+                    className="action-button"
+                    onClick={() => openModal(ModalType.ChangeVault)}
+                  >
                     {/* Font Awesome fa-solid fa-arrow-right-arrow-left */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +71,7 @@ const Sidebar: React.FC = () => {
                     >
                       <path d="M438.6 150.6c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 96 32 96C14.3 96 0 110.3 0 128s14.3 32 32 32l306.7 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l96-96zm-333.3 352c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 416 416 416c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96z" />
                     </svg>
-                    Change vault
+                    Manage vaults
                   </button>
                 </li>
               </ul>

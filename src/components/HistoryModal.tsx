@@ -21,6 +21,8 @@ const HistoryModal: React.FC = () => {
 
   const currentVault = useCurrentVault();
 
+  // Compute reversed history with additionnal properties
+  // Used to cache data and compute only when needed
   const reversedVaultHistory = useMemo<IFormattedVaultHistoryItem[]>(() => {
     const reversedHistory = currentVault.history.slice().reverse();
     const formattedHistory: IFormattedVaultHistoryItem[] = [];

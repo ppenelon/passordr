@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, Fragment } from "react";
+import React, { useMemo, useRef, useState, Fragment, useEffect } from "react";
 import classNames from "classnames";
 import Sidebar from "./components/Sidebar";
 import HistoryModal from "./components/HistoryModal";
@@ -14,17 +14,12 @@ import {
   useCurrentVault,
   useVaultsManagerStore,
 } from "./stores/vaultsManager.store";
+import ChangeVaultModal from "./components/ChangeVaultModal";
 
 function App() {
   const currentVault = useCurrentVault();
-  const setCurrentVaultHint = useVaultsManagerStore(
-    (state) => state.setCurrentVaultHint
-  );
-  const setCurrentVaultServices = useVaultsManagerStore(
-    (state) => state.setCurrentVaultServices
-  );
-  const addHistoryItemToCurrentVault = useVaultsManagerStore(
-    (state) => state.addHistoryItemToCurrentVault
+  const updateCurrentStoredVault = useVaultsManagerStore(
+    (state) => state.updateCurrentVault
   );
 
   const openSidebar = useInteractionsStore((state) => state.openSidebar);
@@ -72,6 +67,13 @@ function App() {
     [services, currentVault.services]
   );
 
+  // Reset view when changing vault
+  useEffect(() => {
+    setHint(currentVault.hint);
+    setServices(currentVault.services);
+    setEditMode(false);
+  }, [currentVault]);
+
   function goEditMode() {
     setServices((services) => [...services, generateNewService()]);
     setEditMode(true);
@@ -106,10 +108,14 @@ function App() {
       ),
     };
 
-    setCurrentVaultHint(hint);
+    updateCurrentStoredVault((vault) => ({
+      ...vault,
+      hint: hint,
+      services: servicesWithoutNew,
+      history: [...vault.history, historyItem],
+    }));
+
     setServices(servicesWithoutNew);
-    setCurrentVaultServices(servicesWithoutNew);
-    addHistoryItemToCurrentVault(historyItem);
     setEditMode(false);
   }
 
@@ -186,6 +192,7 @@ function App() {
     <div className="App">
       {/* Modals */}
       <HistoryModal />
+      <ChangeVaultModal />
 
       {/* Sidebar */}
       <Sidebar />

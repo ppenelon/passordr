@@ -1,0 +1,40 @@
+.change-vault-modal ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.change-vault-modal h3 {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.change-vault-modal h3 svg {
+  width: 1rem;
+  margin-right: 0.5rem;
+}
+
+.change-vault-modal h3 .current-vault {
+  font-size: .5rem;
+  margin-left: .5rem;
+  background: #88d75d;
+  padding: 0.1rem 0.2rem;
+  vertical-align: super;
+  border-radius: 5px;
+}
+
+.change-vault-modal h3 .vault-last-update {
+  font-size: .8rem;
+  opacity: 0.5;
+}
+
+.change-vault-modal ul li.vault-item button.action-button {
+  margin: 0 1rem;
+}
+
+.change-vault-modal ul li.new-vault button.action-button {
+  margin: 2rem 0 0 0;
+  font-weight: bold;
+}
+
