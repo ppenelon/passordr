@@ -13,7 +13,7 @@ export function generateNewVault(): IVault {
 
 export function generateNewService(): IVaultService {
   return {
-    name: '',
-    outdated: false
+    name: "",
+    outdated: false,
   };
 }

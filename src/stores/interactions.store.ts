@@ -1,13 +1,14 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export enum ModalType {
-  History = 'history'
+  History = "history",
+  ChangeVault = "change-vault",
 }
 
 export interface IInteractionsStore {
   sidebarOpened: boolean;
   openedModal: ModalType | null;
- 
+
   openSidebar: () => void;
   closeSidebar: () => void;
   openModal: (modalType: ModalType) => void;
