@@ -59,21 +59,21 @@ const HistoryModal: React.FC = () => {
     <Modal title={`Vault history (${currentVault.history.length} update${currentVault.history.length > 1 ? 's' : ''})`} className="history-modal" opened={openedModal === ModalType.History} onClose={() => closeModal()}>
       <ul className="vault-history">
         {reversedVaultHistory.map(historyItem => 
-          <li className="vault-history-item">
+          <li className="vault-history-item" key={historyItem.timestamp}>
             <h3>
               <span>{historyItem.formattedTimestamp}</span>
               <span>
                 {
                   Object.entries(historyItem.totalsUpdateTypes)
                     .map(([type, totalUpdates]) => 
-                      <span data-vault-history-item-update-type={type}>{totalUpdates}</span>
+                      <span data-vault-history-item-update-type={type} key={type}>{totalUpdates}</span>
                     )
                 }
               </span>
             </h3>
             <ul>
-              {historyItem.updatesWithHint.map(historyItemUpdate =>
-                <li className="vault-history-item-update">
+              {historyItem.updatesWithHint.map((historyItemUpdate, index) =>
+                <li className="vault-history-item-update" key={index}>
                   <span data-vault-history-item-update-type={historyItemUpdate.type}>{historyItemUpdate.type}</span>
                   <table className="vault-history-item-update-values">
                     <tbody>
