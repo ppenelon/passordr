@@ -1,41 +1,42 @@
 import React, { useMemo, useRef, useState, Fragment } from 'react';
 import classNames from 'classnames';
 import Sidebar from './components/Sidebar';
-import { useVaultStore, generateNewService, IVaultHistoryItem, IVaultHistoryItemUpdate, VaultHistoryItemUpdateType } from './stores/vault.store';
 import HistoryModal from './components/HistoryModal';
 import './App.css';
 import { useInteractionsStore } from './stores/interactions.store';
+import { IVaultHistoryItem, IVaultHistoryItemUpdate, VaultHistoryItemUpdateType } from './types/vault.type';
+import { generateNewService } from './helpers/vault.helper';
+import { useCurrentVault, useVaultsManagerStore } from './stores/vaultsManager.store';
 
 function App() {
-  const storedServices = useVaultStore(state => state.services);
-  const storedHint = useVaultStore(state => state.hint);
-  const setStoredHint = useVaultStore(state => state.setHint);
-  const setStoredServices = useVaultStore(state => state.setServices);
-  const storeNewHistoryItem = useVaultStore(state => state.addHistoryItem);
+  const currentVault = useCurrentVault();
+  const setCurrentVaultHint = useVaultsManagerStore(state => state.setCurrentVaultHint);
+  const setCurrentVaultServices = useVaultsManagerStore(state => state.setCurrentVaultServices);
+  const addHistoryItemToCurrentVault = useVaultsManagerStore(state => state.addHistoryItemToCurrentVault);
 
   const openSidebar = useInteractionsStore(state => state.openSidebar);
   
   const [editMode, setEditMode] = useState(false);
 
-  const [hint, setHint] = useState(storedHint);
+  const [hint, setHint] = useState(currentVault.hint);
   const hintLinesCount = useMemo(() => hint.split(/\r\n|\r|\n/).length, [hint]);
 
-  const [services, setServices] = useState(storedServices);
+  const [services, setServices] = useState(currentVault.services);
   const servicesInputRef = useRef<(HTMLInputElement | null)[]>([]);
 
   const editedServicesStatus = useMemo(() => services.map((service, i) => {
     // Handle existing services modifications
-    if(i < storedServices.length) {
+    if(i < currentVault.services.length) {
       // Revive outdated service
-      if (storedServices[i].outdated && !service.outdated) {
+      if (currentVault.services[i].outdated && !service.outdated) {
         return VaultHistoryItemUpdateType.Added;
       } 
       // Outdate service
-      else if (!storedServices[i].outdated && service.outdated) {
+      else if (!currentVault.services[i].outdated && service.outdated) {
         return VaultHistoryItemUpdateType.Outdate;
       } 
       // Update service content
-      else if (storedServices[i].name !== service.name) {
+      else if (currentVault.services[i].name !== service.name) {
         return VaultHistoryItemUpdateType.Update;
       }
     } 
@@ -52,7 +53,7 @@ function App() {
     }
     // Service not updated
     return false;
-  }), [services, storedServices]);
+  }), [services, currentVault.services]);
 
   function goEditMode() {
     setServices(services => [...services, generateNewService()]);
@@ -63,8 +64,8 @@ function App() {
     const servicesWithoutNew = services.slice(0, services.length - 1);
     const historyItem: IVaultHistoryItem = {
       timestamp: new Date().toISOString(),
-      hint: storedHint !== hint ? {
-        hintFrom: storedHint,
+      hint: currentVault.hint !== hint ? {
+        hintFrom: currentVault.hint,
         hintTo: hint,
       } : undefined,
       updates: services.reduce<IVaultHistoryItemUpdate[]>((editedServices, service, i) => {
@@ -72,7 +73,7 @@ function App() {
           editedServices.push({
             serviceIndex: i,
             type: editedServicesStatus[i] as IVaultHistoryItemUpdate['type'],
-            serviceNameFrom: storedServices[i] ? storedServices[i].name : '',
+            serviceNameFrom: currentVault.services[i] ? currentVault.services[i].name : '',
             serviceNameTo: service.name,
           });
         }
@@ -80,16 +81,16 @@ function App() {
       }, [])
     };
 
-    setStoredHint(hint);
+    setCurrentVaultHint(hint);
     setServices(servicesWithoutNew);
-    setStoredServices(servicesWithoutNew);
-    storeNewHistoryItem(historyItem)
+    setCurrentVaultServices(servicesWithoutNew);
+    addHistoryItemToCurrentVault(historyItem)
     setEditMode(false);
   };
 
   function goCancel() {
-    setHint(storedHint);
-    setServices(storedServices);
+    setHint(currentVault.hint);
+    setServices(currentVault.services);
     setEditMode(false);
   }
   
@@ -138,7 +139,7 @@ function App() {
           // Has no name
           !services[serviceIndex].name && 
           // Is new service
-          serviceIndex >= storedServices.length && 
+          serviceIndex >= currentVault.services.length && 
           // Is not the last service (the new one)
           serviceIndex < services.length - 1
         ) {
@@ -183,7 +184,7 @@ function App() {
       <div className="content">
         {/* Hint */}
         <div className="category-name"><div>HINT</div></div>
-        <div className={classNames("hint", { edited: editMode && storedHint !== hint })}>
+        <div className={classNames("hint", { edited: editMode && currentVault.hint !== hint })}>
           <textarea
             value={hint}
             rows={hintLinesCount}
@@ -197,7 +198,7 @@ function App() {
         <div className={classNames("services", { 'edit-mode': editMode })}>
           {services.map((service, i) =>
             <div className={classNames("service", { outdated: service.outdated, new: editMode && i === services.length - 1 }, editMode && editedServicesStatus[i] && ["edited", editedServicesStatus[i]])} key={i}>
-              <div className="index" onClick={e => editMode && i < storedServices.length && toggleServiceOutdated(i)}>{i}</div>
+              <div className="index" onClick={e => editMode && i < currentVault.services.length && toggleServiceOutdated(i)}>{i}</div>
               <input
                 className="title"
                 ref={el => servicesInputRef.current[i] = el}
