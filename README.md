@@ -16,5 +16,6 @@ Passwords management app without storing any password
 
 ## Incoming
 
-- Server synchronisation (via Drive, S3)
+- Server synchronization (via Drive, S3)
 - PWA
+- Search

@@ -1,9 +1,13 @@
 export interface IVault {
   clientId: string;
-  name: string;
+
   hint: string;
   services: IVaultService[];
   history: IVaultHistoryItem[];
+
+  name: string;
+  localFileSynchronizer?: IVaultLocalFileBackup;
+  googleDriveSynchronizer?: IVaultGoogleDriveBackup;
 }
 
 export interface IVaultService {
@@ -34,4 +38,11 @@ export enum VaultHistoryItemUpdateType {
   Added = "added",
   Update = "update",
   Outdate = "outdate",
+}
+
+export interface IVaultLocalFileBackup {
+  lastBackupDate: string;
+}
+export interface IVaultGoogleDriveBackup {
+  lastBackupDate: string;
 }

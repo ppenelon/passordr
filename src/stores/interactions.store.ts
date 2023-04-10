@@ -3,6 +3,8 @@ import { create } from "zustand";
 export enum ModalType {
   History = "history",
   ChangeVault = "change-vault",
+  Backup = "backup",
+  Parameters = "parameters",
 }
 
 export interface IInteractionsStore {

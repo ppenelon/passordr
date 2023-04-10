@@ -38,6 +38,10 @@ jobs:
         run: npm ci
       - name: Build project with Vite
         run: npm run build
+        env:
+          VITE_GOOGLE_API_KEY: AIzaSyCr1evlHaHkumI-4vdQdr50udgRdtKOaeA
+          VITE_GOOGLE_CLIENT_ID: 293225283958-trov8l9l11stv5859vv48p2s6ip6cqmb.apps.googleusercontent.com
+          VITE_GOOGLE_SCOPES: https://www.googleapis.com/auth/drive.appdata
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:

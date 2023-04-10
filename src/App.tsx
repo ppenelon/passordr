@@ -15,6 +15,8 @@ import {
   useVaultsManagerStore,
 } from "./stores/vaultsManager.store";
 import ChangeVaultModal from "./components/ChangeVaultModal";
+import ParametersModal from "./components/ParametersModal";
+import BackupModal from "./components/BackupModal";
 
 function App() {
   const currentVault = useCurrentVault();
@@ -193,6 +195,8 @@ function App() {
       {/* Modals */}
       <HistoryModal />
       <ChangeVaultModal />
+      <BackupModal />
+      <ParametersModal />
 
       {/* Sidebar */}
       <Sidebar />

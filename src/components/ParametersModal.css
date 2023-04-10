@@ -1,0 +1,13 @@
+.parameters-modal .action-button {
+  font-size: 1.2rem;
+  margin: 0 1rem;
+  color: #1e262c;
+}
+
+.parameters-modal .toggle-synchronizer {
+  float: right;
+}
+
+.parameters-modal small {
+  white-space: nowrap;
+}
