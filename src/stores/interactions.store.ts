@@ -10,18 +10,24 @@ export enum ModalType {
 export interface IInteractionsStore {
   sidebarOpened: boolean;
   openedModal: ModalType | null;
+  isAppLoading: boolean;
 
   openSidebar: () => void;
   closeSidebar: () => void;
   openModal: (modalType: ModalType) => void;
   closeModal: () => void;
+  setAppLoading: () => void;
+  setAppLoaded: () => void;
 }
 
 export const useInteractionsStore = create<IInteractionsStore>((set) => ({
   sidebarOpened: false,
   openedModal: null,
+  isAppLoading: false,
   openSidebar: () => set({ sidebarOpened: true }),
   closeSidebar: () => set({ sidebarOpened: false }),
   openModal: (modalType: ModalType) => set({ openedModal: modalType }),
   closeModal: () => set({ openedModal: null }),
+  setAppLoading: () => set({ isAppLoading: true }),
+  setAppLoaded: () => set({ isAppLoading: false }),
 }));

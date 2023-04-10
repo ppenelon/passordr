@@ -25,6 +25,7 @@ function App() {
   );
 
   const openSidebar = useInteractionsStore((state) => state.openSidebar);
+  const isAppLoading = useInteractionsStore((state) => state.isAppLoading);
 
   const [editMode, setEditMode] = useState(false);
 
@@ -202,7 +203,7 @@ function App() {
       <Sidebar />
 
       {/* Header */}
-      <div className="header">
+      <div className={classNames("header", { loading: isAppLoading })}>
         {/* Title */}
         <button className="title action-button" onClick={(e) => openSidebar()}>
           {/* Font Awesome fa-solid fa-bars */}

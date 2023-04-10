@@ -17,6 +17,8 @@ type GoogleDriveBackupData = Awaited<
 const ParametersModal: React.FC = () => {
   const openedModal = useInteractionsStore((state) => state.openedModal);
   const closeModal = useInteractionsStore((state) => state.closeModal);
+  const setAppLoading = useInteractionsStore((state) => state.setAppLoading);
+  const setAppLoaded = useInteractionsStore((state) => state.setAppLoaded);
 
   const currentVault = useCurrentVault();
 
@@ -109,13 +111,23 @@ const ParametersModal: React.FC = () => {
         <div className="synchronizer-actions">
           <button
             className="action-button"
-            onClick={() =>
-              backup(SynchronizerType.GoogleDrive).then(() => loadBackupsList())
-            }
+            onClick={async () => {
+              setAppLoading();
+              await backup(SynchronizerType.GoogleDrive).catch();
+              await loadBackupsList().catch();
+              setAppLoaded();
+            }}
           >
             📤 Export vault to Drive
           </button>
-          <button className="action-button" onClick={() => loadBackupsList()}>
+          <button
+            className="action-button"
+            onClick={async () => {
+              setAppLoading();
+              await loadBackupsList().catch();
+              setAppLoaded();
+            }}
+          >
             🔄 Load backups list
           </button>
         </div>
@@ -133,16 +145,25 @@ const ParametersModal: React.FC = () => {
             <div className="synchronizer-actions">
               <button
                 className="action-button"
-                onClick={() => deleteSelectedGoogleDriveBackups()}
+                onClick={async () => {
+                  setAppLoading();
+                  await deleteSelectedGoogleDriveBackups().catch();
+                  setAppLoaded();
+                }}
                 disabled={selectedBackupsId.length === 0}
               >
                 🗑️ Delete selected backups
               </button>
               <button
                 className="action-button"
-                onClick={() =>
-                  restore(selectedBackupsId[0], SynchronizerType.GoogleDrive)
-                }
+                onClick={async () => {
+                  setAppLoading();
+                  await restore(
+                    selectedBackupsId[0],
+                    SynchronizerType.GoogleDrive
+                  ).catch();
+                  setAppLoaded();
+                }}
                 disabled={selectedBackupsId.length !== 1}
               >
                 📥 Import selected backup
