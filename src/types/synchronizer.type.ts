@@ -9,7 +9,7 @@ export enum SynchronizerType {
   GoogleDrive = "google-drive",
 }
 
-export type ISynchronizerData = Pick<IVault, "hint" | "services" | "history">;
+export type ISynchronizerData = Pick<IVault, "password" | "encryptedData">;
 
 type IVaultBackupMetadata<T extends SynchronizerType> =
   T extends SynchronizerType.GoogleDrive

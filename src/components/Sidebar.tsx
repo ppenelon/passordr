@@ -2,7 +2,10 @@ import React from "react";
 import classNames from "classnames";
 import "./Sidebar.css";
 import { ModalType, useInteractionsStore } from "../stores/interactions.store";
-import { useCurrentVault } from "../stores/vaultsManager.store";
+import {
+  useCurrentVault,
+  useVaultsManagerStore,
+} from "../stores/vaultsManager.store";
 
 const Sidebar: React.FC = () => {
   const sidebarOpened = useInteractionsStore((state) => state.sidebarOpened);
@@ -10,6 +13,7 @@ const Sidebar: React.FC = () => {
   const openModal = useInteractionsStore((state) => state.openModal);
 
   const currentVault = useCurrentVault();
+  const openedVaultData = useVaultsManagerStore((state) => state.vaultData);
 
   return (
     <div className={classNames("sidebar", { opened: sidebarOpened })}>
@@ -44,21 +48,23 @@ const Sidebar: React.FC = () => {
                 {currentVault.name}
               </button>
               <ul>
-                <li>
-                  <button
-                    className="action-button"
-                    onClick={() => openModal(ModalType.History)}
-                  >
-                    {/* Font Awesome fa-solid fa-clock */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 512 512"
+                {openedVaultData && (
+                  <li>
+                    <button
+                      className="action-button"
+                      onClick={() => openModal(ModalType.History)}
                     >
-                      <path d="M256 512C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256s-114.6 256-256 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z" />
-                    </svg>
-                    View history
-                  </button>
-                </li>
+                      {/* Font Awesome fa-solid fa-clock */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 512 512"
+                      >
+                        <path d="M256 512C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256s-114.6 256-256 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z" />
+                      </svg>
+                      View history
+                    </button>
+                  </li>
+                )}
                 <li>
                   <button
                     className="action-button"

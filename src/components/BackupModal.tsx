@@ -17,6 +17,7 @@ type GoogleDriveBackupData = Awaited<
 const ParametersModal: React.FC = () => {
   const openedModal = useInteractionsStore((state) => state.openedModal);
   const closeModal = useInteractionsStore((state) => state.closeModal);
+  const closeSidebar = useInteractionsStore((state) => state.closeSidebar);
   const setAppLoading = useInteractionsStore((state) => state.setAppLoading);
   const setAppLoaded = useInteractionsStore((state) => state.setAppLoaded);
 
@@ -30,7 +31,7 @@ const ParametersModal: React.FC = () => {
         ? new Date(
             currentVault.localFileSynchronizer?.lastBackupDate
           ).toLocaleString()
-        : "N/A",
+        : "Never",
     [currentVault.localFileSynchronizer]
   );
 
@@ -98,7 +99,13 @@ const ParametersModal: React.FC = () => {
           </button>
           <button
             className="action-button"
-            onClick={() => restore("", SynchronizerType.LocalFile)}
+            onClick={() => {
+              setAppLoading();
+              restore("", SynchronizerType.LocalFile);
+              closeModal();
+              closeSidebar();
+              setAppLoaded();
+            }}
           >
             📥 Recover from file
           </button>
@@ -162,6 +169,8 @@ const ParametersModal: React.FC = () => {
                     selectedBackupsId[0],
                     SynchronizerType.GoogleDrive
                   ).catch();
+                  closeModal();
+                  closeSidebar();
                   setAppLoaded();
                 }}
                 disabled={selectedBackupsId.length !== 1}

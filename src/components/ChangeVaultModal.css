@@ -15,10 +15,9 @@
   margin-right: 0.5rem;
 }
 
-.change-vault-modal h3 .current-vault {
+.change-vault-modal h3 .vault-tag {
   font-size: .5rem;
   margin-left: .5rem;
-  background: #88d75d;
   padding: 0.1rem 0.2rem;
   vertical-align: super;
   border-radius: 5px;

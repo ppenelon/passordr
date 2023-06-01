@@ -28,6 +28,7 @@ const ChangeVaultModal: React.FC = () => {
     changeCurrentVault(vault.clientId);
     closeModal();
     closeSidebar();
+    window.location.reload();
   }
 
   function renameVault(vault: IVault) {
@@ -43,6 +44,7 @@ const ChangeVaultModal: React.FC = () => {
     );
     if (confirmDelete) {
       deleteStoredVault(vault.clientId);
+      window.location.reload();
     }
   }
 
@@ -51,6 +53,7 @@ const ChangeVaultModal: React.FC = () => {
     storeNewVault(newVault, { insertAndSelect: true });
     closeModal();
     closeSidebar();
+    window.location.reload();
   }
 
   return (
@@ -72,14 +75,21 @@ const ChangeVaultModal: React.FC = () => {
 
                 {vault.name}
 
+                {vault.password && (
+                  <span className="vault-tag" style={{ background: "#d75dc5" }}>
+                    PROTECTED
+                  </span>
+                )}
                 {vault.clientId === currentVault.clientId && (
-                  <span className="current-vault">CURRENT</span>
+                  <span className="vault-tag" style={{ background: "#88d75d" }}>
+                    CURRENT
+                  </span>
                 )}
               </span>
               <span className="vault-last-update">
                 Last update:{" "}
-                {vault.history.length > 0
-                  ? new Date(vault.history[0].timestamp).toLocaleString()
+                {vault.lastUpdate
+                  ? new Date(vault.lastUpdate).toLocaleString()
                   : "Never"}
               </span>
             </h3>

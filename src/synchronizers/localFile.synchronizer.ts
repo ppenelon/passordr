@@ -52,8 +52,8 @@ export class LocalFileSynchronizer
 
     const vaultRestoredData = JSON.parse(content);
     if (
-      !vaultRestoredData.hasOwnProperty("hint") ||
-      !vaultRestoredData.hasOwnProperty("services")
+      !vaultRestoredData.hasOwnProperty("password") ||
+      !vaultRestoredData.hasOwnProperty("encryptedData")
     ) {
       throw new Error("Bad restoration file");
     }

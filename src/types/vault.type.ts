@@ -1,13 +1,21 @@
 export interface IVault {
   clientId: string;
 
+  name: string;
+  encryptedData: string;
+
+  password: boolean;
+
+  lastUpdate?: string;
+
+  localFileSynchronizer?: IVaultLocalFileBackup;
+  googleDriveSynchronizer?: IVaultGoogleDriveBackup;
+}
+
+export interface IVaultData {
   hint: string;
   services: IVaultService[];
   history: IVaultHistoryItem[];
-
-  name: string;
-  localFileSynchronizer?: IVaultLocalFileBackup;
-  googleDriveSynchronizer?: IVaultGoogleDriveBackup;
 }
 
 export interface IVaultService {

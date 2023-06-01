@@ -8,7 +8,9 @@ import {
 
 export function useSynchronization() {
   const currentVault = useCurrentVault();
-  const updateCurrentVault = useVaultsManagerStore().updateCurrentVault;
+  const updateCurrentVault = useVaultsManagerStore(
+    (state) => state.updateCurrentVault
+  );
 
   const localFileSynchronizer = new LocalFileSynchronizer();
   const googleDriveSynchronizer = new GoogleDriveSynchronizer();
@@ -42,6 +44,7 @@ export function useSynchronization() {
           currentVault
         );
         updateCurrentVault((vault) => localFileRestoredData);
+        window.location.reload();
         break;
       case SynchronizerType.GoogleDrive:
         const googleDriveRestoredData = await googleDriveSynchronizer.restore(
@@ -49,7 +52,10 @@ export function useSynchronization() {
           currentVault
         );
         updateCurrentVault((vault) => googleDriveRestoredData);
+        window.location.reload();
         break;
+      default:
+        throw new Error("Synchronizer not found");
     }
   }
 

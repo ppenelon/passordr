@@ -7,7 +7,7 @@ import {
   VaultHistoryItemUpdateType,
 } from "../types/vault.type";
 import "./HistoryModal.css";
-import { useCurrentVault } from "../stores/vaultsManager.store";
+import { useVaultsManagerStore } from "../stores/vaultsManager.store";
 
 interface IFormattedVaultHistoryItem extends IVaultHistoryItem {
   formattedTimestamp: string;
@@ -19,12 +19,16 @@ const HistoryModal: React.FC = () => {
   const openedModal = useInteractionsStore((state) => state.openedModal);
   const closeModal = useInteractionsStore((state) => state.closeModal);
 
-  const currentVault = useCurrentVault();
+  const openedVaultData = useVaultsManagerStore((state) => state.vaultData);
+  const storedHistory = useMemo(
+    () => (openedVaultData ? openedVaultData.history : []),
+    [openedVaultData]
+  );
 
   // Compute reversed history with additionnal properties
   // Used to cache data and compute only when needed
   const reversedVaultHistory = useMemo<IFormattedVaultHistoryItem[]>(() => {
-    const reversedHistory = currentVault.history.slice().reverse();
+    const reversedHistory = storedHistory.slice().reverse();
     const formattedHistory: IFormattedVaultHistoryItem[] = [];
 
     for (const historyItem of reversedHistory) {
@@ -64,12 +68,12 @@ const HistoryModal: React.FC = () => {
     }
 
     return formattedHistory;
-  }, [currentVault.history]);
+  }, [storedHistory]);
 
   return (
     <Modal
-      title={`Vault history (${currentVault.history.length} update${
-        currentVault.history.length > 1 ? "s" : ""
+      title={`Vault history (${storedHistory.length} update${
+        storedHistory.length > 1 ? "s" : ""
       })`}
       className="history-modal"
       opened={openedModal === ModalType.History}

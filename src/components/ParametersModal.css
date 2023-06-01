@@ -11,3 +11,19 @@
 .parameters-modal small {
   white-space: nowrap;
 }
+
+.parameters-modal fieldset + fieldset {
+  margin-top: 1rem;
+}
+
+.parameters-modal select, .parameters-modal input {
+  width: 100%;
+  font-size: 1rem;
+  padding: .1rem .2rem;
+  margin-top: .2rem;
+}
+.parameters-modal fieldset button {
+  font-size: 1rem;
+  padding: .1rem .2rem;
+  margin-top: .2rem;
+}

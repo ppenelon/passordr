@@ -5,8 +5,7 @@ export function extractSynchronizerDataFromVault(
   vault: IVault
 ): ISynchronizerData {
   return {
-    hint: vault.hint,
-    services: vault.services,
-    history: vault.history,
+    password: vault.password,
+    encryptedData: vault.encryptedData,
   };
 }
